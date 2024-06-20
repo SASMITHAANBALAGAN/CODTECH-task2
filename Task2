@@ -1,0 +1,116 @@
+#MEALY MACHINE
+module  mealy(out,clk,reset,in); 
+parameter a=0,b=1,c=2,d=3; 
+output reg out; 
+input clk,reset,in; 
+reg [1:0] state,next_state; 
+always @(posedge clk) 
+    if(reset) 
+        state<=a; 
+    else state<=next_state; 
+always @(*) 
+case(state) 
+a: if(in) 
+      begin next_state=b; out=0;end 
+    else 
+      begin next_state=a; out=0;end      
+b:  if(in)    
+    begin next_state=b; out=0;end 
+    else 
+    begin next_state=c; out=0; end 
+c: if(in) 
+   begin next_state=d; out=0; end 
+   else 
+   begin next_state=a; out=0; end 
+d: if(in) 
+    begin next_state=b; out=1; end 
+    else 
+    begin next_state=c;out=0; end   
+endcase     
+endmodule
+
+module tbb(); 
+wire out; 
+reg clk,reset,in; 
+mealy uut(out,clk,reset,in); 
+initial 
+begin 
+clk=1; 
+forever #10 clk=~clk; 
+end 
+initial  
+begin 
+//input is 110110110 
+reset=1; 
+#1 reset=0;in=1; 
+#20 in=1; 
+#20 in=0; 
+#20 in=1; 
+#20 in=1; 
+#20 in=0; 
+#20 in=1; 
+#20 in=1; 
+#20 in=0; 
+end 
+endmodule   
+
+#MOORE MACHINE
+module moore(out,clk,reset,in); 
+parameter a=0,b=1,c=2,d=3,e=4; 
+output reg out; 
+input clk,reset,in; 
+reg [2:0] state,next_state; 
+always @(posedge clk) 
+    if(reset) 
+        state<=a; 
+    else state<=next_state; 
+always @(in or state) 
+case(state) 
+a: begin out=0; 
+    if(in) next_state=b;  
+    else next_state=a; 
+   end         
+b:  begin out=0; 
+    if(in) next_state=b;  
+    else next_state=c; 
+    end 
+c:  begin out=0; 
+    if(in) next_state=d; 
+    else next_state=a;  
+    end 
+d:  begin out=0; 
+    if(in) next_state=e; 
+    else next_state=c; 
+    end 
+e:  begin out=1; 
+    if(in) next_state=b; 
+    else next_state=c; 
+    end         
+endcase     
+endmodule         
+
+module tbb(); 
+wire out; 
+reg clk,reset,in; 
+moore uut(out,clk,reset,in); 
+initial 
+begin 
+clk=1; 
+forever #10 clk=~clk; 
+end 
+initial  
+begin 
+//input is 110110110 
+reset=1; 
+#1 reset=0;in=1; 
+#20 in=1; 
+#20 in=0; 
+#20 in=1; 
+#20 in=1; 
+#20 in=0; 
+#20 in=1; 
+#20 in=1; 
+#20 in=0; 
+end 
+endmodule
+
